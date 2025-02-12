@@ -1,20 +1,16 @@
-/**
- * Valid options for identifier composition.
- */
+/** Valid options for identifier composition */
 export enum IdentifierComposition {
-  /** Letters and digits only */
-  Alphanumeric = "alphanumeric",
+  /** Letters and digits */
+  Alphanumeric,
   /** Letters, digits and hyphen */
-  AlphanumericHyphen = "alphanumeric-hyphen",
+  AlphanumericHyphen,
   /** Letters, digits and underscore */
-  AlphanumericUnderscore = "alphanumeric-underscore",
+  AlphanumericUnderscore,
   /** Letters, digits, hyphen and underscore */
-  AlphanumericHyphenUnderscore = "alphanumeric-hyphen-underscore",
+  AlphanumericHyphenUnderscore,
 }
 
-/**
- * Rules for allowed delimiters.
- */
+/** Rules for how delimiters can be used */
 export interface DelimiterRules {
   allowLeadingTrailingHyphens: boolean;
   allowLeadingTrailingUnderscores: boolean;
@@ -23,9 +19,7 @@ export interface DelimiterRules {
   allowAdjacentHyphenUnderscore: boolean;
 }
 
-/**
- * Configuration for validation rules.
- */
+/** Optional configuration parameters */
 export interface ConfigOptions {
   minLength?: number | null;
   maxLength?: number | null;
@@ -33,6 +27,7 @@ export interface ConfigOptions {
   delimiter?: DelimiterRules | null;
 }
 
+/** Configuration for validation rules */
 export class Config {
   private static readonly DEFAULT_MIN_LENGTH = 3;
 
@@ -45,6 +40,7 @@ export class Config {
     this.validate();
   }
 
+  /** Creates a new Config from options */
   static create(options: ConfigOptions = {}): Config {
     return new Config(
       options.minLength ?? Config.DEFAULT_MIN_LENGTH,
@@ -54,6 +50,7 @@ export class Config {
     );
   }
 
+  /** Creates a minimal config with relaxed rules */
   static minimal(): Config {
     return new Config(
       null,
@@ -63,6 +60,7 @@ export class Config {
     );
   }
 
+  /** Validates the config values */
   private validate(): void {
     if (
       this.minLength !== null &&
@@ -73,22 +71,23 @@ export class Config {
     }
   }
 
-  toString(): string {
-    return `Config(minLength=${this.minLength}, maxLength=${this.maxLength}, identifier=${this.identifier}, delimiter=${JSON.stringify(this.delimiter)})`;
-  }
+  toString = (): string =>
+    `Config(minLength=${this.minLength}, maxLength=${this.maxLength}, identifier=${this.identifier}, delimiter=${JSON.stringify(this.delimiter)})`;
 }
 
+/** Creates delimiter rules with specified options */
 export const createDelimiterRules = (
-  options: Partial<DelimiterRules> = {},
+  o: Partial<DelimiterRules> = {},
 ): DelimiterRules => ({
   allowLeadingTrailingHyphens: false,
   allowLeadingTrailingUnderscores: false,
   allowConsecutiveHyphens: false,
   allowConsecutiveUnderscores: false,
   allowAdjacentHyphenUnderscore: false,
-  ...options,
+  ...o,
 });
 
+/** Creates delimiter rules with all options enabled */
 export const createAllowedDelimiterRules = (): DelimiterRules => ({
   allowLeadingTrailingHyphens: true,
   allowLeadingTrailingUnderscores: true,
@@ -97,6 +96,5 @@ export const createAllowedDelimiterRules = (): DelimiterRules => ({
   allowAdjacentHyphenUnderscore: true,
 });
 
-export const createConfig = (options: ConfigOptions = {}): Config => {
-  return Config.create(options);
-};
+/** Creates a new Config with provided options */
+export const createConfig = (o: ConfigOptions = {}): Config => Config.create(o);

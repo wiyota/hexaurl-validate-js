@@ -1,15 +1,46 @@
 {
   "name": "hexaurl-validate",
   "version": "0.1.0",
-  "main": "dist/index.js",
+  "description": "Validation library for HexaURL strings with configurable rules",
+  "author": {
+    "name": "Inomoto, Yota",
+    "email": "yota@perforate.org"
+  },
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/perforate-org/hexaurl-validate-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/perforate-org/hexaurl-validate-js/issues"
+  },
+  "homepage": "https://github.com/perforate-org/hexaurl-validate-js#readme",
+  "keywords": [
+    "validation",
+    "url",
+    "hexaurl",
+    "string-validation",
+    "typescript"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup",
-    "test": "vitest"
+    "test": "vitest",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "description": "",
   "devDependencies": {
     "tsup": "^8.3.6",
     "typedoc": "^0.27.7",

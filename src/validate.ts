@@ -1,7 +1,12 @@
-import { Config, IdentifierComposition, DelimiterRules } from "./config";
+import {
+  Config,
+  IdentifierComposition,
+  DelimiterRules,
+  createDelimiterRules,
+} from "./config";
 import { HexaUrlError, HexaUrlErrorCode } from "./error";
 
-// RegExp patterns for validation
+// Precompiled RegExp patterns for efficient text validation
 const PATTERNS = {
   ALPHANUMERIC: /^[0-9A-Za-z]+$/,
   ALPHANUMERIC_HYPHEN: /^[0-9A-Za-z-]+$/,
@@ -10,69 +15,92 @@ const PATTERNS = {
 };
 
 /**
- * Calculates the length of the decoded string based on the number of input bytes.
+ * Calculates the length of the decoded string based on the input byte count.
+ * Uses SIXBIT 4:3 ratio.
  */
-function calcStrLen(n: number): number {
-  return (n * 4) / 3;
-}
+const calcStrLen = (n: number): number => (n * 4) / 3;
 
 /**
- * Validates a HexaURL string with default configuration.
+ * Validates a HexaURL string against configurable rules.
+ *
+ * ---
+ *
+ * Performs validation checks in the following order:
+ * 1. Length constraints (min/max) - throws InvalidLength error if minLength is greater than calculated max length
+ * 2. Character composition based on identifier type
+ * 3. Delimiter rules for hyphens and underscores
+ *
+ * ---
+ *
+ * Default configuration:
+ * - Minimum length: 3 characters
+ * - Maximum length: Based on byteSize parameter (16 bytes = 21 characters)
+ * - Allowed chars: Alphanumeric with hyphens only
+ * - Strict delimiter rules:
+ *   - No leading/trailing delimiters
+ *   - No consecutive delimiters
+ *   - No adjacent hyphen-underscore pairs
+ *
+ * ---
+ *
+ * @param input The HexaURL string to validate
+ * @param config Optional configuration for validation rules
+ * @param byteSize The target byte array size after encoding (default 16)
+ *
+ * @throws {HexaUrlError} If any validation rule is violated, with specific error code and message
  */
-export function validate(input: string, byteSize: number): void {
-  validateWithConfig(input, Config.create(), byteSize);
-}
-
-/**
- * Validates a HexaURL string with custom configuration.
- */
-export function validateWithConfig(
+export const validate = (
   input: string,
-  config: Config,
-  byteSize: number,
-): void {
+  config: Config = Config.create(),
+  byteSize: number = 16,
+): void => {
   const len = input.length;
 
-  // Check minimum length
-  if (config.minLength !== null && len < config.minLength) {
-    throw new HexaUrlError(
-      `String is too short: minimum length is ${config.minLength} characters`,
-      HexaUrlErrorCode.StringTooShort,
-    );
-  }
-
-  // Check maximum length
+  // Calculate effective maximum length
   const effectiveMax =
     config.maxLength !== null
       ? Math.min(config.maxLength, calcStrLen(byteSize))
       : calcStrLen(byteSize);
 
-  if (len > effectiveMax) {
-    throw new HexaUrlError(
-      `String is too long: maximum length is ${effectiveMax} characters`,
-      HexaUrlErrorCode.StringTooLong,
+  // Check if effectiveMax is less than minLength
+  if (config.minLength !== null && effectiveMax < config.minLength) {
+    throwError(
+      HexaUrlErrorCode.InvalidConfig,
+      `Maximum length (${effectiveMax}) cannot be less than minimum length (${config.minLength})`,
     );
   }
+
+  // Check minimum length
+  config.minLength !== null &&
+    len < config.minLength &&
+    throwError(
+      HexaUrlErrorCode.StringTooShort,
+      `String is too short: minimum length is ${config.minLength} characters`,
+    );
+
+  // Check maximum length
+  len > effectiveMax &&
+    throwError(
+      HexaUrlErrorCode.StringTooLong,
+      `String is too long: maximum length is ${effectiveMax} characters`,
+    );
 
   // Character validation based on identifier composition
-  const pattern = getPatternForIdentifier(config.identifier);
-  if (!pattern.test(input)) {
-    throw new HexaUrlError(
-      "Invalid character in this type of HexaURL",
+  !getPatternForIdentifier(config.identifier).test(input) &&
+    throwError(
       HexaUrlErrorCode.InvalidCharacter,
+      "Invalid character in this type of HexaURL",
     );
-  }
 
   // Delimiter rules validation
-  if (config.delimiter) {
-    validateDelimiters(input, config.delimiter);
-  }
-}
+  validateDelimiters(input, config.delimiter ?? createDelimiterRules());
+};
 
 /**
- * Returns the appropriate RegExp pattern for the given identifier composition.
+ * Maps identifier composition to corresponding RegExp pattern.
+ * Patterns are precompiled for performance.
  */
-function getPatternForIdentifier(identifier: IdentifierComposition): RegExp {
+const getPatternForIdentifier = (identifier: IdentifierComposition): RegExp => {
   switch (identifier) {
     case IdentifierComposition.Alphanumeric:
       return PATTERNS.ALPHANUMERIC;
@@ -83,64 +111,71 @@ function getPatternForIdentifier(identifier: IdentifierComposition): RegExp {
     case IdentifierComposition.AlphanumericHyphenUnderscore:
       return PATTERNS.ALPHANUMERIC_HYPHEN_UNDERSCORE;
   }
-}
+};
 
 /**
- * Validates delimiter rules for the input string.
+ * Validates all delimiter-related rules against input string.
+ * Checks both positional (leading/trailing) and sequential (consecutive/adjacent) rules.
  */
-function validateDelimiters(input: string, rules: DelimiterRules): void {
+const validateDelimiters = (input: string, rules: DelimiterRules): void => {
   // Check leading/trailing delimiters
-  if (!rules.allowLeadingTrailingHyphens) {
-    if (input.startsWith("-") || input.endsWith("-")) {
-      throw new HexaUrlError(
-        "Hyphens cannot start or end this type of HexaURL",
-        HexaUrlErrorCode.LeadingTrailingHyphen,
-      );
-    }
-  }
+  !rules.allowLeadingTrailingHyphens &&
+    (input.startsWith("-") || input.endsWith("-")) &&
+    throwError(
+      HexaUrlErrorCode.LeadingTrailingHyphen,
+      "Hyphens cannot start or end this type of HexaURL",
+    );
 
-  if (!rules.allowLeadingTrailingUnderscores) {
-    if (input.startsWith("_") || input.endsWith("_")) {
-      throw new HexaUrlError(
-        "Underscores cannot start or end this type of HexaURL",
-        HexaUrlErrorCode.LeadingTrailingUnderscore,
-      );
-    }
-  }
+  !rules.allowLeadingTrailingUnderscores &&
+    (input.startsWith("_") || input.endsWith("_")) &&
+    throwError(
+      HexaUrlErrorCode.LeadingTrailingUnderscore,
+      "Underscores cannot start or end this type of HexaURL",
+    );
 
   // Check consecutive delimiters
-  if (!rules.allowConsecutiveHyphens) {
-    if (input.includes("--")) {
-      throw new HexaUrlError(
-        "This type of HexaURL cannot include consecutive hyphens",
-        HexaUrlErrorCode.ConsecutiveHyphens,
-      );
-    }
-  }
+  !rules.allowConsecutiveHyphens &&
+    input.includes("--") &&
+    throwError(
+      HexaUrlErrorCode.ConsecutiveHyphens,
+      "This type of HexaURL cannot include consecutive hyphens",
+    );
 
-  if (!rules.allowConsecutiveUnderscores) {
-    if (input.includes("__")) {
-      throw new HexaUrlError(
-        "This type of HexaURL cannot include consecutive underscores",
-        HexaUrlErrorCode.ConsecutiveUnderscores,
-      );
-    }
-  }
+  !rules.allowConsecutiveUnderscores &&
+    input.includes("__") &&
+    throwError(
+      HexaUrlErrorCode.ConsecutiveUnderscores,
+      "This type of HexaURL cannot include consecutive underscores",
+    );
 
   // Check adjacent different delimiters
-  if (!rules.allowAdjacentHyphenUnderscore) {
-    if (input.includes("-_") || input.includes("_-")) {
-      throw new HexaUrlError(
-        "This type of HexaURL cannot include adjacent hyphens and underscores",
-        HexaUrlErrorCode.AdjacentHyphenUnderscore,
-      );
-    }
-  }
-}
+  !rules.allowAdjacentHyphenUnderscore &&
+    (input.includes("-_") || input.includes("_-")) &&
+    throwError(
+      HexaUrlErrorCode.AdjacentHyphenUnderscore,
+      "This type of HexaURL cannot include adjacent hyphens and underscores",
+    );
+};
+
+/** Helper function to throw typed validation errors */
+const throwError = (code: HexaUrlErrorCode, message: string): never => {
+  throw new HexaUrlError(message, code);
+};
 
 /**
- * Checks if the input string is safe for HexaURL encoding.
+ * Performs a fast pre-validation safety check for HexaURL encoding to prevent errors and conflicts.
+ *
+ * Efficiently validates only string length constraints and ASCII character restriction, skipping full validation.
+ *
+ * Optimized for rapid pre-screening before search operations or other cases where generating an invalid
+ * HexaURL temporarily is acceptable. The lighter validation makes it ideal for high-performance lookup scenarios
+ * where a full validation pass is not required.
+ *
+ * ---
+ *
+ * @param input The string to check
+ * @param byteSize The target byte array size after encoding (default 16)
+ * @returns boolean indicating if the string is safe to encode
  */
-export function isEncodingSafe(input: string, byteSize: number): boolean {
-  return input.length <= calcStrLen(byteSize) && /^[\x00-\x7F]*$/.test(input);
-}
+export const isEncodingSafe = (input: string, byteSize: number = 16): boolean =>
+  input.length <= calcStrLen(byteSize) && /^[\x00-\x7F]*$/.test(input);
