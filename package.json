@@ -1,0 +1,19 @@
+{
+  "name": "hexaurl-validate",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "devDependencies": {
+    "tsup": "^8.3.6",
+    "typedoc": "^0.27.7",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}
