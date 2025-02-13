@@ -36,12 +36,21 @@
     "dist"
   ],
   "sideEffects": false,
+  "size-limit": [
+    {
+      "path": "./dist/index.js",
+      "limit": "5 KB"
+    }
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest",
+    "size": "size-limit",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@size-limit/preset-small-lib": "^11.1.6",
+    "size-limit": "^11.1.6",
     "tsup": "^8.3.6",
     "typedoc": "^0.27.7",
     "typescript": "^5.7.3",
