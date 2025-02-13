@@ -1,6 +1,6 @@
 # hexaurl-validate
 
-![HexaURL validate logo](https://github.com/perforate-org/hexaurl/blob/main/assets/validate_logo.png?raw=true)
+![HexaURL Validate logo](https://github.com/perforate-org/hexaurl/blob/main/assets/validate_logo.png?raw=true)
 
 A TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules.
 
