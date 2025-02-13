@@ -4,6 +4,8 @@
 
 A TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules.
 
+This library has no dependencies, so it's lightweight and simple to integrate. It also helps protect against vulnerabilities in unmaintained packages and avoids deprecation or version conflicts.
+
 ## Installation
 
 ```bash
@@ -14,7 +16,7 @@ npm install hexaurl-validate
 
 ### Basic Validation
 
-```typescript
+```ts
 import { validate } from "hexaurl-validate";
 
 let input = "my-hexaurl";
@@ -55,7 +57,7 @@ validate("my_custom-hexa__", config, 32);
 
 ### Checking String Safety
 
-```typescript
+```ts
 import { isEncodingSafe } from "hexaurl-validate";
 
 const isSafe = isEncodingSafe("my-string");
