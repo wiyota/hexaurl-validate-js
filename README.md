@@ -2,7 +2,7 @@
 
 ![HexaURL Validate logo](https://github.com/perforate-org/hexaurl/blob/main/assets/validate_logo.png?raw=true)
 
-A TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules.
+A JavaScript/TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules.
 
 This library has no dependencies, so it's lightweight and simple to integrate. It also helps protect against vulnerabilities in unmaintained packages and avoids deprecation or version conflicts.
 
