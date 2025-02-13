@@ -134,4 +134,4 @@ try {
 
 ## License
 
-This library is dual-licensed under the MIT License and the Apache License 2.0.
+This project is licensed under either of [Apache License, Version 2.0](./LICENSE-APACHE) or [MIT License](./LICENSE-MIT) at your option.
