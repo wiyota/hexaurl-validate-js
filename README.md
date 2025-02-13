@@ -1,4 +1,4 @@
-# hexaurl-validate
+# HexaURL Validate
 
 ![HexaURL Validate logo](https://github.com/perforate-org/hexaurl/blob/main/assets/validate_logo.png?raw=true)
 
