@@ -21,7 +21,7 @@ import { validate } from "hexaurl-validate";
 
 let input = "my-hexaurl";
 
-// Basic validation with default configuration (16 bytes)
+// Basic validation with default configuration (for 16 bytes HexaURL)
 try {
   validate(input);
   console.log("Validation successful!");
