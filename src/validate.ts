@@ -1,6 +1,6 @@
 import {
   Config,
-  IdentifierComposition,
+  Composition,
   DelimiterRules,
   createDelimiterRules,
 } from "./config";
@@ -86,7 +86,7 @@ export const validate = (
     );
 
   // Character validation based on identifier composition
-  !getPatternForIdentifier(config.identifier).test(input) &&
+  !getPatternForComposition(config.composition).test(input) &&
     throwError(
       HexaUrlErrorCode.InvalidCharacter,
       "Invalid character in this type of HexaURL",
@@ -100,15 +100,15 @@ export const validate = (
  * Maps identifier composition to corresponding RegExp pattern.
  * Patterns are precompiled for performance.
  */
-const getPatternForIdentifier = (identifier: IdentifierComposition): RegExp => {
-  switch (identifier) {
-    case IdentifierComposition.Alphanumeric:
+const getPatternForComposition = (composition: Composition): RegExp => {
+  switch (composition) {
+    case Composition.Alphanumeric:
       return PATTERNS.ALPHANUMERIC;
-    case IdentifierComposition.AlphanumericHyphen:
+    case Composition.AlphanumericHyphen:
       return PATTERNS.ALPHANUMERIC_HYPHEN;
-    case IdentifierComposition.AlphanumericUnderscore:
+    case Composition.AlphanumericUnderscore:
       return PATTERNS.ALPHANUMERIC_UNDERSCORE;
-    case IdentifierComposition.AlphanumericHyphenUnderscore:
+    case Composition.AlphanumericHyphenUnderscore:
       return PATTERNS.ALPHANUMERIC_HYPHEN_UNDERSCORE;
   }
 };

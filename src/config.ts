@@ -1,5 +1,5 @@
 /** Valid options for identifier composition */
-export enum IdentifierComposition {
+export enum Composition {
   /** Letters and digits */
   Alphanumeric,
   /** Letters, digits and hyphen */
@@ -23,7 +23,7 @@ export interface DelimiterRules {
 export interface ConfigOptions {
   minLength?: number | null;
   maxLength?: number | null;
-  identifier?: IdentifierComposition;
+  composition?: Composition;
   delimiter?: DelimiterRules | null;
 }
 
@@ -34,7 +34,7 @@ export class Config {
   constructor(
     public readonly minLength: number | null = Config.DEFAULT_MIN_LENGTH,
     public readonly maxLength: number | null = null,
-    public readonly identifier: IdentifierComposition = IdentifierComposition.AlphanumericHyphen,
+    public readonly composition: Composition = Composition.AlphanumericHyphen,
     public readonly delimiter: DelimiterRules | null = null,
   ) {
     this.validate();
@@ -45,7 +45,7 @@ export class Config {
     return new Config(
       options.minLength ?? Config.DEFAULT_MIN_LENGTH,
       options.maxLength ?? null,
-      options.identifier ?? IdentifierComposition.AlphanumericHyphen,
+      options.composition ?? Composition.AlphanumericHyphen,
       options.delimiter ?? null,
     );
   }
@@ -55,7 +55,7 @@ export class Config {
     return new Config(
       null,
       null,
-      IdentifierComposition.AlphanumericHyphenUnderscore,
+      Composition.AlphanumericHyphenUnderscore,
       createAllowedDelimiterRules(),
     );
   }
@@ -72,7 +72,7 @@ export class Config {
   }
 
   toString = (): string =>
-    `Config(minLength=${this.minLength}, maxLength=${this.maxLength}, identifier=${this.identifier}, delimiter=${JSON.stringify(this.delimiter)})`;
+    `Config(minLength=${this.minLength}, maxLength=${this.maxLength}, composition=${this.composition}, delimiter=${JSON.stringify(this.delimiter)})`;
 }
 
 /** Creates delimiter rules with specified options */

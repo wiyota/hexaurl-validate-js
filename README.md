@@ -30,12 +30,8 @@ try {
 
 ### Custom Configuration
 
-```typescript
-import {
-  validate,
-  createConfig,
-  IdentifierComposition,
-} from "hexaurl-validate";
+```ts
+import { validate, createConfig, Composition } from "hexaurl-validate";
 
 // Custom configuration with minimum length of 4 and maximum length of 40
 // Identifier composition: Alphanumeric, hyphen and underscore
@@ -43,7 +39,7 @@ import {
 const config = createConfig({
   minLength: 4,
   maxLength: 40,
-  identifier: IdentifierComposition.AlphanumericHyphenUnderscore,
+  composition: Composition.AlphanumericHyphenUnderscore,
   delimiter: {
     allowLeadingTrailingHyphens: true,
     allowLeadingTrailingUnderscores: true,
@@ -80,7 +76,7 @@ Checks if the input string is safe for HexaURL encoding. If no byte size is prov
 
 ### Configuration
 
-#### `IdentifierComposition`
+#### `Composition`
 
 Enum for valid identifier composition options:
 

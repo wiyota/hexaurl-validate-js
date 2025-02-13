@@ -13,7 +13,7 @@ export { validate, isEncodingSafe } from "./validate";
 export {
   Config,
   ConfigOptions,
-  IdentifierComposition,
+  Composition,
   DelimiterRules,
   createConfig,
   createDelimiterRules,

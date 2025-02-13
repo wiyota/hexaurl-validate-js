@@ -5,7 +5,7 @@ import {
   createConfig,
   createDelimiterRules,
   createAllowedDelimiterRules,
-  IdentifierComposition,
+  Composition,
   HexaUrlError,
   HexaUrlErrorCode,
 } from '../src';
@@ -45,13 +45,13 @@ describe('HexaURL Validation', () => {
 
     it('should handle different identifier compositions', () => {
       const alphanumericConfig = createConfig({
-        identifier: IdentifierComposition.Alphanumeric,
+        composition: Composition.Alphanumeric,
       });
       expect(() => validate('abc123', alphanumericConfig)).not.toThrow();
       expect(() => validate('abc-123', alphanumericConfig)).toThrow(HexaUrlError);
 
       const hyphenConfig = createConfig({
-        identifier: IdentifierComposition.AlphanumericHyphen,
+        composition: Composition.AlphanumericHyphen,
       });
       expect(() => validate('abc-123', hyphenConfig)).not.toThrow();
       expect(() => validate('abc_123', hyphenConfig)).toThrow(HexaUrlError);
@@ -85,7 +85,7 @@ describe('HexaURL Validation', () => {
 
     it('should work with all delimiters allowed', () => {
       const config = createConfig({
-        identifier: IdentifierComposition.AlphanumericHyphenUnderscore,
+        composition: Composition.AlphanumericHyphenUnderscore,
         delimiter: createAllowedDelimiterRules(),
       });
 
