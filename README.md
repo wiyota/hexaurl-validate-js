@@ -2,7 +2,7 @@
 
 ![HexaURL Validate logo](https://github.com/perforate-org/hexaurl/blob/main/assets/validate_logo.png?raw=true)
 
-A JavaScript/TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules.
+A JavaScript/TypeScript library for validating [HexaURL](https://github.com/perforate-org/hexaurl) strings with configurable rules, also provides a module that can be combined with [Zod](https://zodjs.netlify.app/).
 
 This library has no dependencies, so it's lightweight and simple to integrate. It also helps protect against vulnerabilities in unmaintained packages and avoids deprecation or version conflicts.
 
@@ -30,7 +30,7 @@ try {
 }
 ```
 
-### Combine with Zod
+### Combined with Zod
 
 ```ts
 import { z } from "zod";
