@@ -19,11 +19,11 @@ npm install hexaurl-validate
 ```ts
 import { validate } from "hexaurl-validate";
 
-let input = "my-hexaurl";
+let validInput = "my-hexaurl";
 
 // Basic validation with default configuration (for 16 bytes HexaURL)
 try {
-  validate(input);
+  validate(validInput);
   console.log("Validation successful!");
 } catch (error) {
   console.error(`Validation failed: ${error.message}`);
@@ -72,7 +72,7 @@ validate("my_custom-hexa__", config, 32);
 import { isEncodingSafe } from "hexaurl-validate";
 
 const isSafe = isEncodingSafe("my-string");
-console.log(isSafe); // true/false
+console.log(isSafe); // true
 ```
 
 ## API Reference
