@@ -30,6 +30,17 @@ try {
 }
 ```
 
+### Combine with Zod
+
+```ts
+import { z } from "zod";
+import "hexaurl-validate/zod"; // Ensure the module is imported to use the hexaurl method
+
+const schema = z.string().hexaurl();
+
+schema.parse("my-hexaurl");
+```
+
 ### Custom Configuration
 
 ```ts

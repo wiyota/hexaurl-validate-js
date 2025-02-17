@@ -30,6 +30,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./zod": {
+      "types": "./dist/zod/index.d.ts",
+      "import": "./dist/zod/index.mjs",
+      "require": "./dist/zod/index.js"
     }
   },
   "files": [
@@ -45,8 +50,12 @@
   "scripts": {
     "build": "tsup",
     "test": "vitest",
+    "doc": "typedoc",
     "size": "size-limit",
     "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "zod": "^3.0.0"
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^11.1.6",
@@ -54,6 +63,7 @@
     "tsup": "^8.3.6",
     "typedoc": "^0.27.7",
     "typescript": "^5.7.3",
-    "vitest": "^3.0.5"
+    "vitest": "^3.0.5",
+    "zod": "^3.0.0"
   }
 }
